@@ -17,6 +17,32 @@ export const userService = {
     return user;
   },
 
+  logout: async () => {
+    const saved = await AsyncStorage.getItem("user");
+    if (!saved) return;
+
+    const user = JSON.parse(saved);
+
+    await userApi.logout(user._id);
+
+    await AsyncStorage.removeItem("user");
+
+    return true;
+  },
+
+  updateUsername: async (newUsername: string) => {
+    const saved = await AsyncStorage.getItem("user");
+    if (!saved) return null;
+
+    const user = JSON.parse(saved);
+
+    const updated = await userApi.update(user._id, newUsername);
+
+    await AsyncStorage.setItem("user", JSON.stringify(updated));
+
+    return updated;
+  },
+
   getSavedUser: async () => {
     const data = await AsyncStorage.getItem("user");
     return data ? JSON.parse(data) : null;

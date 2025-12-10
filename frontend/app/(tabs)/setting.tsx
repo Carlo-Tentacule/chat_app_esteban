@@ -1,5 +1,6 @@
-import { View, Text, Pressable, Switch, StyleSheet } from "react-native";
+import { View, Text, Pressable, Switch, StyleSheet, TextInput } from "react-native";
 import { useState, useEffect } from "react";
+import { useRouter } from "expo-router";
 import { Feather } from "@expo/vector-icons";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import { COLORS } from "../../src/theme/colors";
@@ -12,6 +13,10 @@ export default function SettingsScreen() {
   const styles = themedStyles(theme);
 
   const [username, setUsername] = useState("");
+  const router = useRouter();
+
+  const [newUsername, setNewUsername] = useState("");
+  const [changeUsername, setChangeUsername] = useState(false);
 
   const switchTheme = (mode : any) => {
     setAppTheme(mode);
@@ -20,6 +25,24 @@ export default function SettingsScreen() {
   const getUsername = async () => {
     const user = await userService.getSavedUser();
     if (user) setUsername(user.username);
+  };
+
+  const userLogout = async () => {
+    await userService.logout();
+    router.replace("/login");
+  };
+
+  const modifyUsername = async () => {
+    if (!newUsername.trim()) return;
+
+    await userService.updateUsername(newUsername);
+    setChangeUsername(false);
+    setNewUsername("");
+    getUsername()
+  };
+
+  const usernameToggle = () => {
+    setChangeUsername(prev => !prev)
   };
 
   useEffect(() => {
@@ -37,14 +60,35 @@ export default function SettingsScreen() {
           </View>
         </View>
 
-        <Pressable style={styles.changeNameButton}>
-          <Feather name="edit-3" size={18} color={theme.primary} />
-          <Text style={styles.changeNameText}>Changement de pseudo</Text>
-        </Pressable>
+        {changeUsername ? (
+          <View style={styles.modifyContainer}>
+            <TextInput
+              value={newUsername}
+              onChangeText={setNewUsername}
+              placeholder="Nouveau pseudo"
+              style={styles.input}
+              placeholderTextColor={theme.secondary}
+            />
+
+            <Pressable style={styles.validateButton} onPress={modifyUsername}>
+              <Text style={styles.validateText}>Valider</Text>
+            </Pressable>
+            <Pressable style={styles.validateButton} onPress={usernameToggle}>
+              <Text style={styles.validateText}>
+                <Feather name="x-circle" size={18} color={theme.text} />
+              </Text>
+            </Pressable>
+          </View>
+        ) : (
+          <Pressable style={styles.changeNameButton} onPress={usernameToggle}>
+            <Feather name="edit-3" size={18} color={theme.primary} />
+            <Text style={styles.changeNameText}>Changement de pseudo</Text>
+          </Pressable>
+        )}
       </View>
 
       <View style={[styles.card, styles.marginTop]}>
-        <Pressable style={styles.listItem}>
+        <Pressable style={styles.listItem} onPress={() => router.push("/history")}>
           <Text style={styles.listItemText}>Historique</Text>
           <Feather name="chevron-right" size={20} color={theme.inputText} />
         </Pressable>
@@ -127,7 +171,7 @@ export default function SettingsScreen() {
         </View>
       </View>
 
-      <Pressable style={styles.logoutButton}>
+      <Pressable style={styles.logoutButton} onPress={() => userLogout()}>
         <Feather name="log-out" size={20} color={theme.danger} />
         <Text style={[styles.logoutText, { marginLeft: 8 }]}>Logout</Text>
       </Pressable>
@@ -156,6 +200,7 @@ const themedStyles = (theme : any) =>
     },
     profileInfo: {
       marginLeft: 6,
+      marginBottom: 10,
     },
     profileName: {
       color: theme.text,
@@ -224,7 +269,7 @@ const themedStyles = (theme : any) =>
       alignItems: "center",
     },
     themeOptionActive: {
-      backgroundColor: "#FF7A00",
+      backgroundColor: theme.primary,
     },
     themeOptionText: {
       color: theme.inputText,
@@ -255,8 +300,31 @@ const themedStyles = (theme : any) =>
       alignItems: "center",
     },
     logoutText: {
-      color: "#FF3B3B",
+      color: theme.danger,
       fontSize: 16,
       fontWeight: "600",
     },
+    modifyContainer: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 10,
+    },
+    input: {
+      flex: 1,
+      padding: 10,
+      borderWidth: 1,
+      borderColor: theme.text,
+      borderRadius: 6,
+      color: theme.text
+    },
+    validateButton: {
+      backgroundColor: theme.primary,
+      paddingHorizontal: 16,
+      paddingVertical: 10,
+      borderRadius: 6
+    },
+    validateText: {
+      color: theme.text,
+      fontWeight: "bold"
+    }
   });

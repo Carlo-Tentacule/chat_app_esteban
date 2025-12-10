@@ -1,7 +1,9 @@
 export const COLORS = {
   light: {
     primary: "#FF7A00",
+    secondary: "#5c5c5cff",
     danger: "#FF3B3B",
+    success: "#4CAF50",
     background: "#f5f5f5",
     text: "#000",
     card: "#fff",
@@ -12,7 +14,9 @@ export const COLORS = {
   },
   dark: {
     primary: "#FF7A00",
+    secondary: "#a1a1a1ff",
     danger: "#FF3B3B",
+    success: "#4CAF50",
     background: "#111",
     text: "#fff",
     card: "#222",
