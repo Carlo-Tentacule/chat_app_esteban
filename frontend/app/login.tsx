@@ -26,7 +26,7 @@ export default function LoginScreen() {
 
     await login(username);
 
-    router.replace("/(tabs)");
+    router.replace("/(tabs)/chat");
 
     setLoading(false);
   };

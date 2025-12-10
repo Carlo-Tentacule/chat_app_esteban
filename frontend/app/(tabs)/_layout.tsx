@@ -2,32 +2,49 @@ import { Tabs } from 'expo-router';
 import React from 'react';
 
 import { HapticTab } from '@/components/haptic-tab';
-import { IconSymbol } from '@/components/ui/icon-symbol';
-import { Colors } from '@/constants/theme';
-import { useColorScheme } from '@/hooks/use-color-scheme';
+import { Feather } from '@expo/vector-icons';
+import { useColorScheme } from "react-native";
+import { COLORS } from "../../src/theme/colors";
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
+  const theme = COLORS[colorScheme ?? "light"];
 
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
+        tabBarActiveTintColor: theme.text,
+        tabBarInactiveTintColor: theme.inputText,
+        tabBarShowLabel: false,      
         headerShown: false,
         tabBarButton: HapticTab,
+        tabBarStyle: {
+          height: 60,
+          paddingBottom: 8,
+          paddingTop: 8,
+          backgroundColor: theme.card,
+        },
+        tabBarItemStyle: {
+          justifyContent: "center",
+          alignItems: "center",
+        },
       }}>
       <Tabs.Screen
-        name="index"
+        name="chat"
         options={{
-          title: 'Home',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="house.fill" color={color} />,
+          title: 'Chat',
+          tabBarIcon: ({ focused, size  }) => (
+          <Feather name="message-circle" size={size} color={focused ? theme.text : theme.inputText} />
+          ),
         }}
       />
       <Tabs.Screen
-        name="explore"
+        name="setting"
         options={{
-          title: 'Explore',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="paperplane.fill" color={color} />,
+          title: 'Paramètre',
+          tabBarIcon: ({ focused, size }) => (
+            <Feather name="settings" size={size} color={focused ? theme.text : theme.inputText} />
+          ),
         }}
       />
     </Tabs>
