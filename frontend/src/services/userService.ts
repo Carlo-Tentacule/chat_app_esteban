@@ -47,4 +47,16 @@ export const userService = {
     const data = await AsyncStorage.getItem("user");
     return data ? JSON.parse(data) : null;
   },
+
+  getUsers: async (status: boolean | null) => {
+    let users: User[] = await userApi.getUsers();
+
+    if (status === null) {
+      return users;
+    }
+
+    const filtered = users.filter((user) => user.isOnline === status);
+
+    return filtered;
+  },
 };
