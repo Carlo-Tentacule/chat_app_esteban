@@ -6,7 +6,8 @@ export const useChat = (userId: string, receiverId: string) => {
     const [messages, setMessages] = useState<any[]>([]);
 
     useEffect(() => {
-        if (!userId) return;
+        if (!userId || !receiverId) return;
+
         const loadHistory = async () => {
             const history = await messageService.getConversation(userId, receiverId);
             setMessages(history);
@@ -15,12 +16,22 @@ export const useChat = (userId: string, receiverId: string) => {
     }, [userId, receiverId]);
 
     useEffect(() => {
-        socket.on("receiveMessage", (msg) => {
+        if (!userId || !receiverId) return;
+
+        const roomId = [userId, receiverId].sort().join("_");
+        socket.emit("joinRoom", roomId);
+
+    }, [userId, receiverId]);
+
+    useEffect(() => {
+        const handler = (msg : string) => {
             setMessages(prev => [...prev, msg]);
-        });
+        };
+
+        socket.on("receiveMessage", handler);
 
         return () => {
-        socket.off("receiveMessage");
+            socket.off("receiveMessage", handler);
         };
     }, []);
 
@@ -35,12 +46,7 @@ export const useChat = (userId: string, receiverId: string) => {
 
         const roomId = [userId, receiverId].sort().join("_");
 
-        socket.emit("sendMessage", {
-            roomId,
-            message: msg
-        });
-
-        setMessages((prev) => [...prev, msg]);
+        socket.emit("sendMessage", { roomId, message: msg });
     };
 
     return { messages, sendMessage };
