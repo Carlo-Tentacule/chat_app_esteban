@@ -3,9 +3,10 @@ import { useState, useEffect } from "react";
 import { router, useLocalSearchParams } from "expo-router";
 import { Feather } from "@expo/vector-icons";
 import { Ionicons } from "@expo/vector-icons";
-import { socket } from "../../src/socket";
 import { userService } from "@/src/services/userService";
 import { useTheme } from "@/src/theme/ThemeContext";
+import { useChat } from "@/src/hooks/useChat";
+import { Message } from "@/src/types/Message";
 
 export default function ChatScreen() {
 
@@ -14,24 +15,26 @@ export default function ChatScreen() {
 
   const { id: friendUserId } = useLocalSearchParams();
   const [currentUserId, setCurrentUserId] = useState("");
+  const [friendUserName, setFriendUserName] = useState("");
 
-  const messages = [
-    {
-      id: "1",
-      text: "Message 1",
-      sender: "me",
-      time: "10:30 AM",
-    },
-    {
-      id: "2",
-      text: "Message 2",
-      sender: "other",
-      time: "10:31 AM",
-    },
-  ];
+  const { messages, sendMessage } = useChat(currentUserId, String(friendUserId));
+  const [input, setInput] = useState("");
 
-  const renderMessage = ({ item }) => {
-    const isMe = item.sender === "me";
+  useEffect(() => {
+    const fetchUser = async () => {
+      const user = await userService.getSavedUser();
+      if (user) setCurrentUserId(user._id);
+    };
+    const fetchUserById = async () => {
+      const user = await userService.getUserById(String(friendUserId));
+      if (user) setFriendUserName(user.username);
+    };
+    fetchUser();
+    fetchUserById();
+  }, []);
+
+  const renderMessage = ({ item }: { item: Message }) => {
+    const isMe = item.senderId === currentUserId;
 
     return (
       <View style={[styles.messageContainer, { alignSelf: isMe ? "flex-end" : "flex-start" }]}>
@@ -46,46 +49,19 @@ export default function ChatScreen() {
           ]}
         >
           <Text style={[styles.messageText, { color: isMe ? "#fff" : theme.text }]}>
-            {item.text}
+            {item.content}
           </Text>
         </View>
 
         <Text style={[styles.timeText, { color: theme.secondary }]}>
-          {item.time}
+          {new Date(item.timestamp).toLocaleTimeString([], {
+            hour: "2-digit",
+            minute: "2-digit",
+          })}
         </Text>
       </View>
     );
   };
-
-  useEffect(() => {
-    const fetchUser = async () => {
-      const user = await userService.getSavedUser();
-      if (user) setCurrentUserId(user._id);
-    };
-    fetchUser();
-  }, []);
-
-  useEffect(() => {
-
-    if (!currentUserId) return;
-
-    const roomId = [currentUserId, friendUserId].join("_");
-    console.log("Room ID :", roomId);
-
-    socket.emit("userConnected", currentUserId);
-
-    socket.emit("joinRoom", roomId);
-
-    socket.on("receiveMessage", (msg) => {
-      console.log("Message reçu :", msg);
-    });
-
-    return () => {
-      socket.off("receiveMessage");
-    };
-
-  }, [currentUserId]);
-
 
   return (
     <View style={[styles.container, { backgroundColor: theme.background }]}>
@@ -95,16 +71,15 @@ export default function ChatScreen() {
         </Pressable>
         <View style={styles.avatarPlaceholder}>
           <Text style={styles.avatarText}>
-            {/* {user.username.charAt(0).toUpperCase()} */}
-            F
+            {friendUserName.charAt(0).toUpperCase()}
           </Text>
         </View>
-        <Text style={[styles.headerText, { color: theme.text }]}>Friend</Text>
+        <Text style={[styles.headerText, { color: theme.text }]}>{friendUserName}</Text>
       </View>
       <FlatList
         data={messages}
         renderItem={renderMessage}
-        keyExtractor={(item) => item.id}
+        keyExtractor={(item, index) => item._id ?? index.toString()}
         style={styles.list}
         contentContainerStyle={{ padding: 15 }}
       />
@@ -123,12 +98,24 @@ export default function ChatScreen() {
         <TextInput
           placeholder="Meow a message…"
           placeholderTextColor={theme.secondary}
+          value={input}
+          onChangeText={setInput}
           style={[
             styles.input,
             { backgroundColor: theme.input, color: theme.inputText }
           ]}
+          onSubmitEditing={() => {
+            sendMessage(input);
+            setInput("");
+          }}
         />
-        <Pressable style={[styles.sendButton, { backgroundColor: theme.primary }]}>
+        <Pressable 
+          style={[styles.sendButton, { backgroundColor: theme.primary }]}
+          onPress={() => {
+            sendMessage(input);
+            setInput("");
+          }}
+        >
           <Ionicons name="paw-outline" size={20} color={theme.buttonText} />
         </Pressable>
       </View>

@@ -3,6 +3,7 @@ const express = require("express");
 const cors = require("cors");
 const connectDB = require("./src/config/db");
 const userRoutes = require("./src/routes/userRoutes");
+const messageRoutes = require("./src/routes/messageRoutes");
 const chatSocket = require("./socket");
 
 const http = require("http");
@@ -14,6 +15,7 @@ app.use(express.json());
 connectDB();
 
 app.use("/users", userRoutes);
+app.use("/messages", messageRoutes);
 
 const server = http.createServer(app);
 const io = new Server(server, {

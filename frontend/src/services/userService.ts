@@ -59,4 +59,12 @@ export const userService = {
 
     return filtered;
   },
+
+  getUserById: async (id: string) => {
+    let users: User[] = await userApi.getUsers();
+
+    const user = users.find((user) => user._id === id);
+
+    return user;
+  },
 };
