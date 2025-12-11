@@ -9,7 +9,7 @@ export default function RootLayout() {
     const checkUser = async () => {
       const user = await AsyncStorage.getItem("user");
 
-      if (user) router.replace("/(tabs)/chat");
+      if (user) router.replace("/(tabs)/chats");
       else router.replace("/login");
     };
 

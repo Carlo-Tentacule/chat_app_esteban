@@ -30,11 +30,11 @@ export default function TabLayout() {
         },
       }}>
       <Tabs.Screen
-        name="chat"
+        name="chats"
         options={{
           title: 'Chat',
           tabBarIcon: ({ focused, size  }) => (
-          <Feather name="message-circle" size={size} color={focused ? theme.text : theme.inputText} />
+            <Feather name="message-circle" size={size} color={focused ? theme.text : theme.inputText} />
           ),
         }}
       />
