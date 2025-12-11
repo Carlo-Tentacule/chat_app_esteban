@@ -6,4 +6,9 @@ export const messageApi = {
     const res = await fetch(`${API_BASE}/messages/${senderId}/${receiverId}`);
     return res.json();
   },
+
+  getConversations: async (userId: string) => {
+    const res = await fetch(`${API_BASE}/messages/conversations/${userId}`);
+    return res.json();
+  },
 };

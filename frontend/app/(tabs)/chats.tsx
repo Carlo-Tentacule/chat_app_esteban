@@ -144,7 +144,7 @@ const themedStyles = (theme : any) =>
     marginRight: 14,
   },
   avatarText: {
-    color: theme.text,
+    color: "#fff",
     fontWeight: "700",
     fontSize: 20,
   },
