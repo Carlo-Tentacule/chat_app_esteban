@@ -1,5 +1,6 @@
 import { Stack, useRouter } from "expo-router";
 import { useEffect } from "react";
+import { ThemeProvider } from "@/src/theme/ThemeContext";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function RootLayout() {
@@ -16,5 +17,9 @@ export default function RootLayout() {
     checkUser();
   }, []);
 
-  return <Stack screenOptions={{ headerShown: false }} />;
+  return (
+    <ThemeProvider>
+      <Stack screenOptions={{ headerShown: false }} />
+    </ThemeProvider>
+  )
 }

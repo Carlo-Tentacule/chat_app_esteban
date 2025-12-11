@@ -1,7 +1,6 @@
 import { View, Text, StyleSheet, Pressable, ScrollView } from "react-native";
 import { router } from "expo-router";
-import { useColorScheme } from "@/hooks/use-color-scheme";
-import { COLORS } from "../../src/theme/colors";
+import { useTheme } from "@/src/theme/ThemeContext";
 
 const fakeUsers = [
   { id: "1", name: "Luna the Cat", status: "Online" },
@@ -19,8 +18,7 @@ const fakeUsers = [
 ];
 
 export default function ChatsListScreen() {
-  const scheme = useColorScheme();
-  const theme = COLORS[scheme ?? "light"];
+  const { theme, mode, toggleTheme } = useTheme();
   const styles = themedStyles(theme);
 
   return (
@@ -34,14 +32,12 @@ export default function ChatsListScreen() {
             style={styles.item}
             onPress={() => router.push(`/chat/${user.id}`)}
           >
-            {/* Avatar placeholder */}
             <View style={styles.avatarPlaceholder}>
               <Text style={styles.avatarText}>
                 {user.name.charAt(0).toUpperCase()}
               </Text>
             </View>
-
-            {/* User info */}
+            
             <View style={styles.info}>
               <Text style={styles.name}>{user.name}</Text>
 
@@ -90,7 +86,7 @@ const themedStyles = (theme : any) =>
     width: 55,
     height: 55,
     borderRadius: 30,
-    backgroundColor: "#444",
+    backgroundColor: theme.primary,
     alignItems: "center",
     justifyContent: "center",
     marginRight: 14,

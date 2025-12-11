@@ -2,14 +2,12 @@ import { View, Text, Pressable, Switch, StyleSheet, TextInput } from "react-nati
 import { useState, useEffect } from "react";
 import { useRouter } from "expo-router";
 import { Feather } from "@expo/vector-icons";
-import { useColorScheme } from "@/hooks/use-color-scheme";
-import { COLORS } from "../../src/theme/colors";
+import { useTheme } from "@/src/theme/ThemeContext";
 import { userService } from "@/src/services/userService";
 
 export default function SettingsScreen() {
-  const scheme = useColorScheme();
-  const [appTheme, setAppTheme] = useState(scheme ?? "light");
-  const theme = COLORS[appTheme];
+  
+  const { theme, mode, toggleTheme } = useTheme();
   const styles = themedStyles(theme);
 
   const [username, setUsername] = useState("");
@@ -17,10 +15,6 @@ export default function SettingsScreen() {
 
   const [newUsername, setNewUsername] = useState("");
   const [changeUsername, setChangeUsername] = useState(false);
-
-  const switchTheme = (mode : any) => {
-    setAppTheme(mode);
-  };
 
   const getUsername = async () => {
     const user = await userService.getSavedUser();
@@ -108,13 +102,13 @@ export default function SettingsScreen() {
           <Pressable
             style={[
               styles.themeOption,
-              appTheme === "light" && styles.themeOptionActive
+              mode === "light" && styles.themeOptionActive
             ]}
-            onPress={() => switchTheme("light")}
+            onPress={() => toggleTheme("light")}
           >
             <Text
               style={
-                appTheme === "light"
+                mode === "light"
                   ? styles.themeOptionTextActive
                   : styles.themeOptionText
               }
@@ -125,13 +119,13 @@ export default function SettingsScreen() {
           <Pressable
             style={[
               styles.themeOption,
-              appTheme === "dark" && styles.themeOptionActive
+              mode === "dark" && styles.themeOptionActive
             ]}
-            onPress={() => switchTheme("dark")}
+            onPress={() => toggleTheme("dark")}
           >
             <Text
               style={
-                appTheme === "dark"
+                mode === "dark"
                   ? styles.themeOptionTextActive
                   : styles.themeOptionText
               }
@@ -327,4 +321,4 @@ const themedStyles = (theme : any) =>
       color: theme.text,
       fontWeight: "bold"
     }
-  });
+});

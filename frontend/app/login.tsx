@@ -2,16 +2,15 @@ import React, { useState } from "react";
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image } from "react-native";
 import { useRouter } from "expo-router";
 import { useAuth } from "../src/hooks/useAuth";
-import { useColorScheme } from "react-native";
-import { COLORS } from "../src/theme/colors";
+import { useTheme } from "@/src/theme/ThemeContext";
 
 export default function LoginScreen() {
   const [username, setUsername] = useState("");
   const [loading, setLoading] = useState(false);
   const router = useRouter();
   const { login } = useAuth();
-  const scheme = useColorScheme();
-  const theme = COLORS[scheme ?? "light"];
+  const { theme, mode, toggleTheme } = useTheme();
+  const styles = themedStyles(theme);
 
 
   const generateCatWord = () => {
@@ -78,54 +77,55 @@ export default function LoginScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 30,
-    justifyContent: "center",
-  },
+const themedStyles = (theme : any) =>
+  StyleSheet.create({
+    container: {
+      flex: 1,
+      padding: 30,
+      justifyContent: "center",
+    },
 
-  label: {
-    marginBottom: 8,
-    fontSize: 16,
-  },
+    label: {
+      marginBottom: 8,
+      fontSize: 16,
+    },
 
-  input: {
-    padding: 15,
-    borderRadius: 12,
-    marginBottom: 15,
-    borderWidth: 1,
-    borderColor: "#333",
-  },
+    input: {
+      padding: 15,
+      borderRadius: 12,
+      marginBottom: 15,
+      borderWidth: 1,
+      borderColor: "#333",
+    },
 
-  randomButton: {
-    padding: 12,
-    borderRadius: 12,
-    marginBottom: 50,
-  },
+    randomButton: {
+      padding: 12,
+      borderRadius: 12,
+      marginBottom: 50,
+    },
 
-  centerText: {
-    textAlign: "center",
-  },
+    centerText: {
+      textAlign: "center",
+    },
 
-  loginButton: {
-    padding: 15,
-    borderRadius: 12,
-  },
+    loginButton: {
+      padding: 15,
+      borderRadius: 12,
+    },
 
-  logoWrapper: {
-    width: 150,
-    height: 150,
-    borderRadius: 75,
-    backgroundColor: "#fff",
-    justifyContent: "center",
-    alignItems: "center",
-    alignSelf: "center",
-    marginBottom: 40,
-  },
+    logoWrapper: {
+      width: 150,
+      height: 150,
+      borderRadius: 75,
+      backgroundColor: "#fff",
+      justifyContent: "center",
+      alignItems: "center",
+      alignSelf: "center",
+      marginBottom: 40,
+    },
 
-  logo: {
-    width: 100,
-    height: 100,
-  },
+    logo: {
+      width: 100,
+      height: 100,
+    },
 });
