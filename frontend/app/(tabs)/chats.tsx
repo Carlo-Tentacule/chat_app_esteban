@@ -1,24 +1,9 @@
 import { View, Text, StyleSheet, Pressable, ScrollView } from "react-native";
+import { useState, useEffect } from "react";
 import { router } from "expo-router";
 import { useTheme } from "@/src/theme/ThemeContext";
 import { userService } from "@/src/services/userService";
-import { useState, useEffect } from "react";
 import { User } from "../../src/types/User";
-
-const fakeUsers = [
-  { id: "1", name: "Luna the Cat", status: "Online" },
-  { id: "2", name: "Leo the Lionheart", status: "Online" },
-  { id: "3", name: "Shadow", status: "Online" },
-  { id: "4", name: "Ginger", status: "Online" },
-  { id: "5", name: "Luna the Cat", status: "Online" },
-  { id: "6", name: "Leo the Lionheart", status: "Online" },
-  { id: "7", name: "Shadow", status: "Online" },
-  { id: "8", name: "Ginger", status: "Online" },
-  { id: "9", name: "Luna the Cat", status: "Online" },
-  { id: "10", name: "Leo the Lionheart", status: "Online" },
-  { id: "11", name: "Shadow", status: "Online" },
-  { id: "12", name: "Ginger", status: "Online" },
-];
 
 export default function ChatsListScreen() {
   const { theme, mode, toggleTheme } = useTheme();

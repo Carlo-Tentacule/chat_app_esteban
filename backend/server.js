@@ -3,6 +3,7 @@ const express = require("express");
 const cors = require("cors");
 const connectDB = require("./src/config/db");
 const userRoutes = require("./src/routes/userRoutes");
+const chatSocket = require("./socket");
 
 const http = require("http");
 const { Server } = require("socket.io");
@@ -23,10 +24,6 @@ const io = new Server(server, {
     }
 });
 
-io.on("connection", socket => {
-  console.log("Un client est connecté :", socket.id);
-  socket.emit("hello", "Bienvenue depuis le serveur !");
-  console.log("User-agent:", socket.handshake.headers["user-agent"]);
-});
+chatSocket(io);
 
 server.listen(3000, () => console.log("Backend lancé sur port 3000"));
