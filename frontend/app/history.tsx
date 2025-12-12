@@ -56,7 +56,7 @@ export default function HistoryScreen() {
       <FlatList
         data={conversations}
         renderItem={renderItem}
-        keyExtractor={(item) => item.userId}
+        keyExtractor={(item, index) => item.userId ?? index.toString()}
         contentContainerStyle={{ paddingVertical: 10 }}
       />
     </View>

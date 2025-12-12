@@ -47,7 +47,7 @@ export default function LoginScreen() {
         value={username}
         onChangeText={setUsername}
         placeholder="Chat_Random"
-        placeholderTextColor={theme.inputText + "77"}
+        placeholderTextColor={theme.secondary}
         style={[
           styles.input,
           { backgroundColor: theme.input, color: theme.inputText }
